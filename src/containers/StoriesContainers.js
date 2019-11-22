@@ -12,7 +12,9 @@ export const StoriesContainer = () => {
 
 
     return (
-        storyIds.map(storyId => <Story key={storyId} storyId={storyId}/>)
+        <>
+            {storyIds.map(storyId => (<Story key={storyId} storyId={storyId}/>))}
+        </>
     );
 
 };
