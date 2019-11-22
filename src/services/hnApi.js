@@ -10,4 +10,5 @@ export const storyurl = `${baseUrl}item/`;
 // blocks the rendering of UI and so we use the async and shove it to the microtask queue
 export const getStoryIds = async () => {
     const result = await axios.get(newStoriesUrl).then((data) => data);
+    return result;
 };
