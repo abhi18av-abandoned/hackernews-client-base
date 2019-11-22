@@ -8,5 +8,13 @@ export const Story = ({storyId}) => {
         getStory(storyId).then(data => data && data.url && setStory(data));
     }, []);
 
-    return (<p>I am a story {JSON.stringify(story)}</p>);
+    return (story && story.url)
+        ? (
+            <>
+                <a href={story.url}>
+                    <p>{story.title}</p>
+                </a>
+            </>
+        )
+        : null
 };
