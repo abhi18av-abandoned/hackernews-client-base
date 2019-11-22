@@ -1,6 +1,10 @@
 import React from 'react';
-import './App.css';
+import {StoriesContainer} from "./containers/StoriesContainers";
 
-export const App = () => (
-    <div>Hello, HackerNews!</div>
-);
+export const App = () => {
+
+    return (
+        <StoriesContainer/>
+    );
+
+};
