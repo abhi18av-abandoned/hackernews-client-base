@@ -8,7 +8,7 @@ export const App = () => {
     useEffect(() => {
         // setStoryIds('Hello from useEffect!');
 
-        getStoryIds().then(data => data && setStoryIds(data))
+        getStoryIds().then(({data}) => data && setStoryIds(data));
     }, []);
 
 
