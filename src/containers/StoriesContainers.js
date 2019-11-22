@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {getStory, getStoryIds} from "../services/hnApi";
+import {getStoryIds} from "../services/hnApi";
+import {Story} from "../components/Story";
 
 export const StoriesContainer = () => {
 
@@ -7,13 +8,11 @@ export const StoriesContainer = () => {
 
     useEffect(() => {
         getStoryIds().then(({data}) => data && setStoryIds(data));
-        getStory(21607226).then(data => console.log(data));
-
     }, []);
 
 
     return (
-        <p>{JSON.stringify(storyIds)}</p>
+        storyIds.map(storyId => <Story storyId={storyId}/>)
     );
 
 };
