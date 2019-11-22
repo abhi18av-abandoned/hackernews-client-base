@@ -1,6 +1,11 @@
-import React from 'react';
-import './App.css';
+import React, {useState} from 'react';
 
-export const App = () => (
-    <div>Hello, HackerNews!</div>
-);
+export const App = () => {
+
+    const [storyIds, setStoryIds] = useState([]);
+
+    return (
+        <p>Hello, HackerNews!</p>
+    );
+
+};
