@@ -5,15 +5,6 @@ import axios from 'axios';
 // constants
 //=============================
 
-const baseUrl = `https://hacker-news.firebaseio.com/v0`;
-const newStoriesUrl = `${baseUrl}/newstories.json`;
-// const storyUrl = `${baseUrl}/item/`;
-
-
-const getStoryIds = async () => {
-    return await axios.get(newStoriesUrl);
-};
-
 //=============================
 // utils
 //=============================
@@ -21,6 +12,21 @@ const getStoryIds = async () => {
 //=============================
 // services
 //=============================
+
+
+const baseUrl = `https://hacker-news.firebaseio.com/v0`;
+const newStoriesUrl = `${baseUrl}/newstories.json`;
+const storyUrl = `${baseUrl}/item/`;
+
+const getStory = async (storyId) => {
+    return await axios.get(`${storyUrl + storyId}.json`);
+};
+
+
+const getStoryIds = async () => {
+    return await axios.get(newStoriesUrl);
+};
+
 
 //=============================
 // components
@@ -36,6 +42,7 @@ const StoriesContainer = () => {
 
     useEffect(() => {
         getStoryIds().then(({data}) => setStoryIds(data));
+        getStory('21613364').then(data => console.log(data));
     }, []);
 
 
