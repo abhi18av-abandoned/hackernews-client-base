@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import axios from 'axios';
 
 //=============================
@@ -32,28 +32,12 @@ const getStoryIds = async () => {
 // components
 //=============================
 
+
 //=============================
 // containers
 //=============================
 
-const StoriesContainer = () => {
 
-    const [storyIds, setStoryIds] = useState([]);
-
-    useEffect(() => {
-        getStoryIds().then(({data}) => setStoryIds(data));
-        getStory('21613364').then(data => console.log(data));
-    }, []);
-
-
-    return (
-        <>
-            <p>Hello, HackerNews!</p>
-            <p>{JSON.stringify(storyIds)}</p>
-        </>
-    );
-
-};
 
 
 //=============================
@@ -82,7 +66,7 @@ export const App = () => {
 
     return (
         <>
-            <StoriesContainer/>
+            <p>Hello, HackerNews!</p>
         </>
     );
 
