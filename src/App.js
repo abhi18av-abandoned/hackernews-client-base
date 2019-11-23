@@ -1,11 +1,25 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import axios from 'axios';
 
 //=============================
 // constants
 //=============================
 
+const baseUrl = `https://hacker-news.firebaseio.com/v0`;
+const newStoriesUrl = `${baseUrl}/newstories.json`;
+const storyUrl = `${baseUrl}/item/`;
+
+
+const getStoryIds = async () => {
+    return await axios.get(newStoriesUrl).then((data) => data);
+};
+
 //=============================
 // utils
+//=============================
+
+//=============================
+// services
 //=============================
 
 //=============================
@@ -24,9 +38,6 @@ import React from 'react';
 // styles
 //=============================
 
-//=============================
-// services
-//=============================
 
 //=============================
 // selectors
@@ -43,8 +54,18 @@ import React from 'react';
 
 export const App = () => {
 
+    const [storyIds, setStoryIds] = useState([]);
+
+    useEffect(() => {
+        setStoryIds('I am a story ID');
+    }, []);
+
+
     return (
-        <p>Hello, HackerNews!</p>
+        <>
+            <p>Hello, HackerNews!</p>
+            <p>{storyIds}</p>
+        </>
     );
 
 };
