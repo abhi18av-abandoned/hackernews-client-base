@@ -7,11 +7,11 @@ import axios from 'axios';
 
 const baseUrl = `https://hacker-news.firebaseio.com/v0`;
 const newStoriesUrl = `${baseUrl}/newstories.json`;
-const storyUrl = `${baseUrl}/item/`;
+// const storyUrl = `${baseUrl}/item/`;
 
 
 const getStoryIds = async () => {
-    return await axios.get(newStoriesUrl).then((data) => data);
+    return await axios.get(newStoriesUrl);
 };
 
 //=============================
@@ -29,6 +29,25 @@ const getStoryIds = async () => {
 //=============================
 // containers
 //=============================
+
+const StoriesContainer = () => {
+
+    const [storyIds, setStoryIds] = useState([]);
+
+    useEffect(() => {
+        getStoryIds().then(({data}) => setStoryIds(data));
+    }, []);
+
+
+    return (
+        <>
+            <p>Hello, HackerNews!</p>
+            <p>{JSON.stringify(storyIds)}</p>
+        </>
+    );
+
+};
+
 
 //=============================
 // hooks
@@ -54,17 +73,9 @@ const getStoryIds = async () => {
 
 export const App = () => {
 
-    const [storyIds, setStoryIds] = useState([]);
-
-    useEffect(() => {
-        setStoryIds('I am a story ID');
-    }, []);
-
-
     return (
         <>
-            <p>Hello, HackerNews!</p>
-            <p>{storyIds}</p>
+            <StoriesContainer/>
         </>
     );
 
