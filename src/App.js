@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, memo} from 'react';
 import styled, {createGlobalStyle} from 'styled-components';
 import axios from 'axios';
 
@@ -6,10 +6,30 @@ import axios from 'axios';
 // constants
 //=============================
 
+const MAX_STORIES = 500;
+const STORY_INCREMENT = 30;
+
 //=============================
 // utils
 //=============================
 
+const debounce = (func, wait, immediate, args) => {
+    let timeout;
+
+    return () => {
+        const context = this;
+        const callNow = immediate && !timeout;
+        const later = () => {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+
+        if (callNow) func.apply(context, args);
+    };
+};
 
 //=============================
 // mappers
@@ -65,32 +85,38 @@ const selectFields = ({id, by, url, time, title} = {}) => ({
 //=============================
 
 
-const baseUrl = `https://hacker-news.firebaseio.com/v0`;
-const newStoriesUrl = `${baseUrl}/newstories.json`;
-const storyUrl = `${baseUrl}/item/`;
+const baseUrl = 'https://hacker-news.firebaseio.com/v0/';
+const newStoriesUrl = `${baseUrl}newstories.json`;
+const storyUrl = `${baseUrl}item/`;
 
 const getStory = async (storyId) => {
-    return await axios.get(`${storyUrl + storyId}.json`);
+    const result = await axios
+        .get(`${storyUrl + storyId}.json`);
+
+    return selectFields(result.data);
 };
 
-
 const getStoryIds = async () => {
-    return await axios.get(newStoriesUrl);
+    const result = await axios.get(newStoriesUrl);
+
+    return result.data;
 };
 
 //=============================
 // components
 //=============================
 
-const Story = ({storyId}) => {
+const Story = memo(
+    /**
+     * @return {null}
+     */
+    function Story({storyId}) {
     const [story, setStory] = useState({});
 
     useEffect(() => {
-        getStory(storyId).then(({data}) => data && data.url && setStory(selectFields(data)));
-
+        getStory(storyId).then(data => data && data.url && setStory(data));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
 
     return story && story.url ? (
         <StoryWrapper data-testid="story">
@@ -99,30 +125,27 @@ const Story = ({storyId}) => {
             </StoryTitle>
             <StoryMeta>
         <span data-testid="story-by">
-          <StoryMetaElement color="#000">By:</StoryMetaElement> {story.by + ' '}
+          <StoryMetaElement color="#000">By:</StoryMetaElement> {story.by}
         </span>
                 <span data-testid="story-time">
           <StoryMetaElement color="#000">Posted:</StoryMetaElement> {` `}
-                    {mapTime(story.time) + ' ago'}
+                    {mapTime(story.time)}
         </span>
             </StoryMeta>
         </StoryWrapper>
     ) : null;
-
-};
-
+    });
 
 //=============================
 // containers
 //=============================
 
 const StoriesContainer = () => {
-
+    const {count} = useInfiniteScroll();
     const [storyIds, setStoryIds] = useState([]);
 
-
     useEffect(() => {
-        getStoryIds().then(({data}) => setStoryIds(data));
+        getStoryIds().then(data => setStoryIds(data));
     }, []);
 
     return (
@@ -130,22 +153,56 @@ const StoriesContainer = () => {
             <GlobalStyle/>
             <StoriesContainerWrapper data-test-id="stories-container">
                 <h1>Hacker News Stories</h1>
-
-                {/*render the actual stories*/}
-
-                {storyIds.map(storyId => (
+                {storyIds.slice(0, count).map(storyId => (
                     <Story key={storyId} storyId={storyId}/>
                 ))}
             </StoriesContainerWrapper>
         </>
-
     );
 };
-
-
 //=============================
 // hooks
 //=============================
+
+// NOTE works only when the browser zoom level is default i.e. 100%
+const useInfiniteScroll = () => {
+    const [loading, setLoading] = useState(false);
+    const [count, setCount] = useState(STORY_INCREMENT);
+
+    const handleScroll = debounce(() => {
+        if (
+            window.innerHeight + document.documentElement.scrollTop !==
+            document.documentElement.offsetHeight ||
+            loading
+        ) {
+            return false;
+        }
+
+        setLoading(true);
+    }, 500);
+
+    useEffect(() => {
+        if (!loading) return;
+
+        if (count + STORY_INCREMENT >= MAX_STORIES) {
+            setCount(MAX_STORIES);
+        } else {
+            setCount(count + STORY_INCREMENT);
+        }
+
+        setLoading(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loading]);
+
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return {count};
+};
+
 
 //=============================
 // styles
@@ -154,11 +211,11 @@ const StoriesContainer = () => {
 
 const GlobalStyle = createGlobalStyle`
             html {
-            -webkit - box - sizing: border-box;
+            -webkit-box-sizing: border-box;
             box-sizing: border-box;
         }
             *, *:before, *:after {
-            -webkit - box - sizing: inherit;
+            -webkit-box-sizing: inherit;
             box-sizing: inherit;
         }
 
@@ -178,24 +235,24 @@ const GlobalStyle = createGlobalStyle`
         }
             `;
 
-export const StoriesContainerWrapper = styled.main`
+const StoriesContainerWrapper = styled.main`
             max-width: 1140px;
             padding: 20px 15px;
             margin: auto;
             `;
 
 
-export const StoryWrapper = styled.section`
+const StoryWrapper = styled.section`
             padding-top: 10px;
             margin-bottom: 20px;
             border-top: 1px solid #cccccc;
 
             &:first-of-type {
-            border - top: 0;
+            border-top: 0;
         }
 
             &:last-of-type {
-            margin - bottom: 0;
+            margin-bottom: 0;
             padding-bottom: 0;
         }
             `;
@@ -218,16 +275,16 @@ const StoryMeta = styled.div`
             font-style: italic;
 
             > span:first-child {
-            margin - right: 10px;
+            margin-right: 10px;
         }
 
             > span:not(:first-child):before {
-            content: '•'
+            content: '•';
             margin: 0 7px;
         }
 
             .story__meta-bold {
-            font - weight: bold;
+            font-weight: bold;
         }
             `;
 
@@ -242,12 +299,5 @@ const StoryMetaElement = styled.span`
 //=============================
 
 
-export const App = () => {
+export const App = () => <StoriesContainer/>;
 
-    return (
-        <>
-            <StoriesContainer/>
-        </>
-    );
-
-};
