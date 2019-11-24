@@ -35,10 +35,9 @@ const Story = ({storyId}) => {
     const [story, setStory] = useState({});
 
     useEffect(() => {
-        // getStory('21617937').then(data => console.log(data));
-        // getStory('21617937').then(({data}) => setStory(data));
-        getStory(storyId).then(({data}) => setStory(data));
+        getStory(storyId).then(({data}) => data && data.url && setStory(data));
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 
@@ -63,13 +62,9 @@ const StoriesContainer = () => {
         getStoryIds().then(({data}) => setStoryIds(data));
     }, []);
 
-
-    return (
-        <>
-            <Story storyId={'21617937'}/>
-            {JSON.stringify(storyIds)}
-        </>
-    );
+    return storyIds.map(storyId => (
+        <Story key={storyId} storyId={storyId}/>
+    ));
 };
 
 
