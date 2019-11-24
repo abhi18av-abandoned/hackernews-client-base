@@ -99,11 +99,11 @@ const Story = ({storyId}) => {
             </StoryTitle>
             <StoryMeta>
         <span data-testid="story-by">
-          <StoryMetaElement color="#000">By:</StoryMetaElement> {story.by}
+          <StoryMetaElement color="#000">By:</StoryMetaElement> {story.by + ' '}
         </span>
                 <span data-testid="story-time">
           <StoryMetaElement color="#000">Posted:</StoryMetaElement> {` `}
-                    {mapTime(story.time)}
+                    {mapTime(story.time) + ' ago'}
         </span>
             </StoryMeta>
         </StoryWrapper>
@@ -125,14 +125,21 @@ const StoriesContainer = () => {
         getStoryIds().then(({data}) => setStoryIds(data));
     }, []);
 
-    return storyIds.map(storyId => (
+    return (
         <>
             <GlobalStyle/>
             <StoriesContainerWrapper data-test-id="stories-container">
-                <Story key={storyId} storyId={storyId}/>
+                <h1>Hacker News Stories</h1>
+
+                {/*render the actual stories*/}
+
+                {storyIds.map(storyId => (
+                    <Story key={storyId} storyId={storyId}/>
+                ))}
             </StoriesContainerWrapper>
         </>
-    ));
+
+    );
 };
 
 
@@ -239,7 +246,6 @@ export const App = () => {
 
     return (
         <>
-            <p>HackerNews!</p>
             <StoriesContainer/>
         </>
     );
