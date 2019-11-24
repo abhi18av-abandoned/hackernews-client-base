@@ -6,14 +6,14 @@ import axios from 'axios';
 // constants
 //=============================
 
-const MAX_STORIES = 500;
-const STORY_INCREMENT = 30;
+export const MAX_STORIES = 500;
+export const STORY_INCREMENT = 30;
 
 //=============================
 // utils
 //=============================
 
-const debounce = (func, wait, immediate, args) => {
+export const debounce = (func, wait, immediate, args) => {
     let timeout;
 
     return () => {
@@ -34,7 +34,7 @@ const debounce = (func, wait, immediate, args) => {
 //=============================
 // mappers
 //=============================
-const mapTime = timestamp => {
+export const mapTime = timestamp => {
     const seconds = Math.floor((new Date() - timestamp * 1000) / 1000);
 
     let interval = Math.floor(seconds / 31536000);
@@ -85,18 +85,18 @@ const selectFields = ({id, by, url, time, title} = {}) => ({
 //=============================
 
 
-const baseUrl = 'https://hacker-news.firebaseio.com/v0/';
-const newStoriesUrl = `${baseUrl}newstories.json`;
-const storyUrl = `${baseUrl}item/`;
+export const baseUrl = 'https://hacker-news.firebaseio.com/v0/';
+export const newStoriesUrl = `${baseUrl}newstories.json`;
+export const storyUrl = `${baseUrl}item/`;
 
-const getStory = async (storyId) => {
+export const getStory = async (storyId) => {
     const result = await axios
         .get(`${storyUrl + storyId}.json`);
 
     return selectFields(result.data);
 };
 
-const getStoryIds = async () => {
+export const getStoryIds = async () => {
     const result = await axios.get(newStoriesUrl);
 
     return result.data;
@@ -106,7 +106,7 @@ const getStoryIds = async () => {
 // components
 //=============================
 
-const Story = memo(
+export const Story = memo(
     /**
      * @return {null}
      */
@@ -140,7 +140,7 @@ const Story = memo(
 // containers
 //=============================
 
-const StoriesContainer = () => {
+export const StoriesContainer = () => {
     const {count} = useInfiniteScroll();
     const [storyIds, setStoryIds] = useState([]);
 
@@ -165,7 +165,7 @@ const StoriesContainer = () => {
 //=============================
 
 // NOTE works only when the browser zoom level is default i.e. 100%
-const useInfiniteScroll = () => {
+export const useInfiniteScroll = () => {
     const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(STORY_INCREMENT);
 
@@ -209,7 +209,7 @@ const useInfiniteScroll = () => {
 //=============================
 
 
-const GlobalStyle = createGlobalStyle`
+export const GlobalStyle = createGlobalStyle`
             html {
             -webkit-box-sizing: border-box;
             box-sizing: border-box;
@@ -235,14 +235,14 @@ const GlobalStyle = createGlobalStyle`
         }
             `;
 
-const StoriesContainerWrapper = styled.main`
+export const StoriesContainerWrapper = styled.main`
             max-width: 1140px;
             padding: 20px 15px;
             margin: auto;
             `;
 
 
-const StoryWrapper = styled.section`
+export const StoryWrapper = styled.section`
             padding-top: 10px;
             margin-bottom: 20px;
             border-top: 1px solid #cccccc;
@@ -257,7 +257,7 @@ const StoryWrapper = styled.section`
         }
             `;
 
-const StoryTitle = styled.h1`
+export const StoryTitle = styled.h1`
             margin-bottom: 5px;
             font-size: 18px;
             line-height: 1.8;
@@ -271,7 +271,7 @@ const StoryTitle = styled.h1`
         }
             `;
 
-const StoryMeta = styled.div`
+export const StoryMeta = styled.div`
             font-style: italic;
 
             > span:first-child {
@@ -288,7 +288,7 @@ const StoryMeta = styled.div`
         }
             `;
 
-const StoryMetaElement = styled.span`
+export const StoryMetaElement = styled.span`
             font-weight: bold;
             color: ${props => props.color};
             `;
