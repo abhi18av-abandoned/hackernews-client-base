@@ -41,11 +41,22 @@ const Story = ({storyId}) => {
     }, []);
 
 
-    return (
-        <>
-            {JSON.stringify(story)}
-        </>
-    );
+    return story && story.url
+        ? (
+            <>
+                <a href={story.url}>
+                    <p>
+                        {story.title}
+                    </p>
+                </a>
+                By: <p>{story.by}</p>
+                Posted: <p>{story.time}</p>
+                <hr/>
+            </>
+        )
+        : null;
+
+
 };
 
 
