@@ -71,7 +71,7 @@ export const mapTime = timestamp => {
 // selectors
 //=============================
 
-export const selectFields = ({id, by, url, time, title} = {}) => ({
+const selectFields = ({id, by, url, time, title} = {}) => ({
     id,
     by,
     url,
